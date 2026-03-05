@@ -1,0 +1,15 @@
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
+
+@layer base {
+  body {
+    @apply bg-jw-bg text-gray-800 antialiased font-sans;
+  }
+}
+
+/* Hide Microsoft Edge / IE default password reveal icon so it doesn't overlap with our Lucide icon */
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear {
+  display: none;
+}
