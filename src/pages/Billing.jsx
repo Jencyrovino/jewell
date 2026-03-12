@@ -58,6 +58,7 @@ export default function Billing() {
     const [isEstimation, setIsEstimation] = useState(false);
 
     const [advanceAmount, setAdvanceAmount] = useState(0);
+    const [dueDate, setDueDate] = useState(new Date().toISOString().split('T')[0]);
     const [linkedOrderId, setLinkedOrderId] = useState(null);
 
     // Handle incoming order conversion
@@ -286,7 +287,7 @@ export default function Billing() {
                     weight: item.netWt,
                     remarks: `Auto-generated from Bill ${currentInvoiceNo}`,
                     orderDate: isoDate,
-                    dueDate: isoDate,
+                    dueDate: finalPayable > 0 ? dueDate : isoDate,
                     advanceAmount: advanceAmount,
                     status: finalPayable > 0 ? 'Pending' : 'Completed',
                     createdAt: new Date().toISOString()
@@ -349,6 +350,7 @@ export default function Billing() {
             setCartItems([]);
             setSelectedCustomer('');
             setAdvanceAmount(0);
+            setDueDate(new Date().toISOString().split('T')[0]);
             setLinkedOrderId(null);
         }
     };
@@ -637,6 +639,17 @@ export default function Billing() {
                                         />
                                     </div>
                                 </div>
+                                {finalPayable > 0 && (
+                                    <div className="flex justify-between items-center pt-2 text-gray-600">
+                                        <span className="font-medium text-sm">Due Date (Balance)</span>
+                                        <input
+                                            type="date"
+                                            className="w-32 border rounded px-2 py-1 text-right bg-white text-sm"
+                                            value={dueDate}
+                                            onChange={(e) => setDueDate(e.target.value)}
+                                        />
+                                    </div>
+                                )}
                                 <div className="flex justify-between items-center pt-4 mt-2 border-t border-jw-gold/30">
                                     <span className="text-xl font-bold text-jw-green">Final Payable</span>
                                     <span className="text-2xl font-bold text-jw-gold-dark">{formatCurrency(finalPayable)}</span>

@@ -7,6 +7,7 @@ import Stock from './pages/Stock';
 import Billing from './pages/Billing';
 import Orders from './pages/Orders';
 import Expenses from './pages/Expenses';
+import Reports from './pages/Reports';
 import Settings from './pages/Settings';
 import Layout from './components/Layout';
 import { ErrorBoundary } from './components/ErrorBoundary';
@@ -44,7 +45,7 @@ function App() {
               {/* Placeholders for other routes */}
               <Route path="orders" element={<Orders />} />
               <Route path="expenses" element={<Expenses />} />
-              <Route path="reports" element={<div className="p-8"><h1 className="text-2xl font-bold">Reports</h1></div>} />
+              <Route path="reports" element={<Reports />} />
               <Route path="settings" element={<Settings />} />
             </Route>
           </Routes>

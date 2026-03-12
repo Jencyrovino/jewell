@@ -39,29 +39,40 @@ export default function Orders() {
 
     // Load data on mount
     useEffect(() => {
-        const storedOrders = JSON.parse(localStorage.getItem('orders') || '[]');
-        const storedCustomers = JSON.parse(localStorage.getItem('customers') || '[]');
+        const loadData = () => {
+            const storedOrders = JSON.parse(localStorage.getItem('orders') || '[]');
+            const storedCustomers = JSON.parse(localStorage.getItem('jw_customers') || '[]');
 
-        // Update statuses dynamically based on due date
-        const today = new Date().toISOString().split('T')[0];
-        const updatedOrders = storedOrders.map(order => {
-            if (order.status !== 'Completed' && order.status !== 'Delivered' && order.dueDate < today) {
-                return { ...order, status: 'Overdue' };
+            // Update statuses dynamically based on due date
+            const today = new Date().toISOString().split('T')[0];
+            const updatedOrders = storedOrders.map(order => {
+                if (order.status !== 'Completed' && order.status !== 'Delivered' && order.dueDate < today) {
+                    return { ...order, status: 'Overdue' };
+                }
+                // If it was overdue but due date is extended, revert to appropriate status
+                if (order.status === 'Overdue' && order.dueDate >= today) {
+                    return { ...order, status: 'Pending' };
+                }
+                return order;
+            });
+
+            setOrders(updatedOrders);
+            if (JSON.stringify(storedOrders) !== JSON.stringify(updatedOrders)) {
+                localStorage.setItem('orders', JSON.stringify(updatedOrders));
             }
-            // If it was overdue but due date is extended, revert to appropriate status
-            // Assuming default to Pending if it's no longer overdue and not completed/delivered
-            if (order.status === 'Overdue' && order.dueDate >= today) {
-                return { ...order, status: 'Pending' }; // Or keep it whatever it was before, implies we might need a history. For now, just update to overdue, don't revert automatically easily without knowing prior state. Let's just do the overdue check.
-            }
-            return order;
-        });
 
-        setOrders(updatedOrders);
-        if (JSON.stringify(storedOrders) !== JSON.stringify(updatedOrders)) {
-            localStorage.setItem('orders', JSON.stringify(updatedOrders));
-        }
+            setCustomers(storedCustomers);
+        };
 
-        setCustomers(storedCustomers);
+        loadData();
+
+        window.addEventListener('jw_orders_updated', loadData);
+        window.addEventListener('jw_customers_updated', loadData);
+
+        return () => {
+            window.removeEventListener('jw_orders_updated', loadData);
+            window.removeEventListener('jw_customers_updated', loadData);
+        };
     }, []);
 
     // KPIs calculation
