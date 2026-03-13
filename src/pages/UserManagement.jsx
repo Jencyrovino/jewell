@@ -2,8 +2,10 @@ import React, { useState, useMemo, useEffect } from 'react';
 import {
     Search, Filter, Download, Plus, Edit2, Trash2, ChevronDown, ChevronUp
 } from 'lucide-react';
-import jsPDF from 'jspdf';
-import 'jspdf-autotable';
+
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
+
 import * as XLSX from 'xlsx';
 import { format } from 'date-fns';
 
@@ -86,17 +88,26 @@ export default function UserManagement() {
         return filteredData;
     }, [users, searchTerm, selectedRoleFilter, sortConfig]);
 
-    // Handle Export
     const handleExportPDF = () => {
-        const doc = new jsPDF();
-        doc.text("User Management Report", 14, 15);
-        doc.autoTable({
-            head: [['Name', 'Phone No.', 'Role', 'Joined Date']],
-            body: processedUsers.map(u => [u.name, u.phone, u.role, format(new Date(u.joined), 'dd MMM yyyy')]),
-            startY: 20,
-        });
-        doc.save('users_report.pdf');
-    };
+    const doc = new jsPDF();
+
+    doc.text("User Management Report", 14, 15);
+
+    autoTable(doc, {
+        head: [['Name', 'Phone No.', 'Role', 'Joined Date']],
+        body: processedUsers.map(u => [
+            u.name,
+            u.phone,
+            u.role,
+            format(new Date(u.joined), 'dd MMM yyyy')
+        ]),
+        startY: 20
+    });
+
+    doc.save("users_report.pdf");
+};
+
+   
 
     const handleExportExcel = () => {
         const dataToExport = processedUsers.map(u => ({
