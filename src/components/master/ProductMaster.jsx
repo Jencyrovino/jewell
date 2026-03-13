@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Plus, Edit2, Trash2, Folder, Search, Download } from 'lucide-react';
 import jsPDF from 'jspdf';
-import 'jspdf-autotable';
+import autoTable from 'jspdf-autotable';
 import * as XLSX from 'xlsx';
 
 const defaultCategories = [
@@ -93,23 +93,42 @@ export default function ProductMaster() {
     const selectedCategoryName = categories.find(c => c.id === selectedCategoryId)?.name || '';
 
     // Handle Export
+   
     const handleExportPDF = () => {
         const doc = new jsPDF();
-        doc.text("Product Master Report", 14, 15);
+
+        // Title
+        doc.setFontSize(16);
+        doc.text("Jewellery Management System", 14, 10);
+
+        doc.setFontSize(14);
+        doc.text("Product Master Report", 14, 18);
+
+        doc.setFontSize(10);
+        doc.text(`Generated: ${new Date().toLocaleDateString()}`, 14, 26);
+
         const body = [];
+
         categories.forEach(cat => {
             const subs = subCategories.filter(sc => sc.categoryId === cat.id);
-            if (subs.length === 0) body.push([cat.name, '-']);
-            subs.forEach(sub => body.push([cat.name, sub.name]));
+
+            if (subs.length === 0) {
+                body.push([cat.name, "-"]);
+            } else {
+                subs.forEach(sub => {
+                    body.push([cat.name, sub.name]);
+                });
+            }
         });
-        doc.autoTable({
+
+        autoTable(doc, {
             head: [['Category', 'Sub-Category']],
             body: body,
-            startY: 20,
+            startY: 32
         });
-        doc.save('products_report.pdf');
-    };
 
+        doc.save("products_report.pdf");
+    };
     const handleExportExcel = () => {
         const dataToExport = [];
         categories.forEach(cat => {

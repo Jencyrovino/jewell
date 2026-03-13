@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Plus, Edit2, Trash2, Search, Download, ChevronDown, ChevronUp } from 'lucide-react';
 import jsPDF from 'jspdf';
-import 'jspdf-autotable';
+import autoTable from 'jspdf-autotable';
 import * as XLSX from 'xlsx';
 
 const defaultCustomers = [
@@ -91,18 +91,35 @@ export default function CustomerMaster() {
         return filteredData;
     }, [customers, searchTerm, sortConfig]);
 
-    // Handle Export
+  
     const handleExportPDF = () => {
-        const doc = new jsPDF();
-        doc.text("Customer Master Report", 14, 15);
-        doc.autoTable({
-            head: [['Customer Name', 'Phone No.', 'Payment Mode', 'GSTIN', 'Transactions']],
-            body: processedCustomers.map(c => [c.name, c.phone, c.paymentMode, c.gstin || '-', c.transactions]),
-            startY: 20,
-        });
-        doc.save('customers_report.pdf');
-    };
+    const doc = new jsPDF();
 
+    // Report title
+    doc.setFontSize(16);
+    doc.text("Jewellery Management System", 14, 10);
+
+    doc.setFontSize(14);
+    doc.text("Customer Master Report", 14, 18);
+
+    doc.setFontSize(10);
+    doc.text(`Generated: ${new Date().toLocaleDateString()}`, 14, 26);
+
+    // Table
+    autoTable(doc, {
+        head: [['Customer Name', 'Phone No.', 'Payment Mode', 'GSTIN', 'Transactions']],
+        body: processedCustomers.map(c => [
+            c.name,
+            c.phone,
+            c.paymentMode,
+            c.gstin || '-',
+            c.transactions
+        ]),
+        startY: 32
+    });
+
+    doc.save("customers_report.pdf");
+};
     const handleExportExcel = () => {
         const dataToExport = processedCustomers.map(c => ({
             'Customer Name': c.name,

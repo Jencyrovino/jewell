@@ -83,7 +83,7 @@ export default function Billing() {
                     makingCharge: 0,
                     makingChargeType: 'per_gram',
                     paymentMode: 'Cash',
-                    baseValue: 0,
+                    baseValue: Number(orderData.advanceAmount) || 0,
                     isCustomOrder: true
                 }]);
             }
@@ -823,17 +823,24 @@ export default function Billing() {
                             </div>
                         </div>
 
+                        
                         {/* Modal Actions */}
-                        <div className="p-4 border-t border-gray-100 bg-white flex justify-end gap-4">
-                            <button onClick={() => setShowReceipt(false)} className="px-6 py-2 border border-gray-300 rounded-lg text-gray-600 hover:bg-gray-50 font-medium transition-colors">
-                                Close
-                            </button>
-                            {receiptData.type !== 'Estimation' && (
-                                <button onClick={handleDownloadPDF} className="flex items-center gap-2 px-6 py-2 bg-jw-green hover:bg-[#1a3826] text-white rounded-lg font-bold shadow-md transition-colors">
-                                    <Download size={18} /> Download PDF
-                                </button>
-                            )}
-                        </div>
+<div className="p-4 border-t border-gray-100 bg-white flex justify-end gap-4">
+    <button 
+        onClick={() => setShowReceipt(false)} 
+        className="px-6 py-2 border border-gray-300 rounded-lg text-gray-600 hover:bg-gray-50 font-medium transition-colors"
+    >
+        Close
+    </button>
+
+    <button 
+        onClick={handleDownloadPDF} 
+        className="flex items-center gap-2 px-6 py-2 bg-jw-green hover:bg-[#1a3826] text-white rounded-lg font-bold shadow-md transition-colors"
+    >
+        <Download size={18} /> Download PDF
+    </button>
+</div>
+                        
                     </div>
                 </div>
             )}

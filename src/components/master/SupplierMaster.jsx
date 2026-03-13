@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Plus, Edit2, Trash2, Search, Download, ChevronDown, ChevronUp } from 'lucide-react';
 import jsPDF from 'jspdf';
-import 'jspdf-autotable';
+import autoTable from 'jspdf-autotable';
 import * as XLSX from 'xlsx';
 
 const defaultSuppliers = [
@@ -74,17 +74,33 @@ export default function SupplierMaster() {
     }, [suppliers, searchTerm, sortConfig]);
 
     // Handle Export
+   
     const handleExportPDF = () => {
-        const doc = new jsPDF();
-        doc.text("Supplier Master Report", 14, 15);
-        doc.autoTable({
-            head: [['Supplier Name', 'Phone No.', 'Address', 'GSTIN']],
-            body: processedSuppliers.map(s => [s.name, s.phone, s.address, s.gstin || '-']),
-            startY: 20,
-        });
-        doc.save('suppliers_report.pdf');
-    };
+    const doc = new jsPDF();
 
+    // Header
+    doc.setFontSize(16);
+    doc.text("Jewellery Management System", 14, 10);
+
+    doc.setFontSize(14);
+    doc.text("Supplier Master Report", 14, 18);
+
+    doc.setFontSize(10);
+    doc.text(`Generated: ${new Date().toLocaleDateString()}`, 14, 26);
+
+    autoTable(doc, {
+        head: [['Supplier Name', 'Phone No.', 'Address', 'GSTIN']],
+        body: processedSuppliers.map(s => [
+            s.name,
+            s.phone,
+            s.address,
+            s.gstin || '-'
+        ]),
+        startY: 32
+    });
+
+    doc.save("suppliers_report.pdf");
+};
     const handleExportExcel = () => {
         const dataToExport = processedSuppliers.map(s => ({
             'Supplier Name': s.name,

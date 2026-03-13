@@ -36,6 +36,7 @@ export default function Orders() {
         dueDate: '',
         advanceAmount: ''
     });
+    
 
     // Load data on mount
     useEffect(() => {

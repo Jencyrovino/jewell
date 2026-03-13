@@ -17,9 +17,13 @@ export default function Layout() {
     const navigate = useNavigate();
 
     const handleLogout = () => {
+    const confirmLogout = window.confirm("Are you sure you want to logout?");
+
+    if (confirmLogout) {
         sessionStorage.removeItem('isAuthenticated');
         navigate('/login');
-    };
+    }
+};
 
     const sidebarItems = [
         { icon: <LayoutDashboard size={20} />, label: 'Dashboard', path: '/dashboard' },
